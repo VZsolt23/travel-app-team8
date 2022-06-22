@@ -1,26 +1,20 @@
 package hu.nye.algorithm.traveler.controller;
 
-import hu.nye.algorithm.traveler.model.line.BusLines;
-import hu.nye.algorithm.traveler.model.line.Flights;
-import hu.nye.algorithm.traveler.model.line.ShipLines;
-import hu.nye.algorithm.traveler.model.line.TrainLines;
 import hu.nye.algorithm.traveler.service.RouteService;
 import hu.nye.algorithm.traveler.service.SettlementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.AbstractMap;
+import java.util.Objects;
 
 @Controller
 public class RouteController {
 
+    private Long settlementId;
     @Autowired
     private RouteService routeService;
 
@@ -58,27 +52,75 @@ public class RouteController {
 
     @GetMapping("/route/{from}/{destination}")
     public String search(@PathVariable String from, @PathVariable String destination, Model model) {
-        System.out.println("EZ BIZA IGEN JÓ!");
 
         model.addAttribute("trainLine", routeService.getAllTrainLines());
         model.addAttribute("busLine", routeService.getAllBusLines());
         model.addAttribute("shipLine", routeService.getAllShipLines());
         model.addAttribute("air", routeService.getAllFlights());
 
-        if (model.getAttribute("trainLine").toString().contains("settlement_name="+from)) {
-            if (model.getAttribute("trainLine").toString().contains("settlement_name="+destination)) {
+        if (model.getAttribute("trainLine").toString().contains("settlement_name=" + from)) {
+            if (model.getAttribute("trainLine").toString().contains("settlement_name=" + destination)) {
+                getId(from, destination);
                 model.addAttribute("route", model.getAttribute("trainLine"));
+                model.addAttribute("asd", "Vonat");
             }
-        } else if (model.getAttribute("busLine").toString().contains("settlement_name="+from)) {
-            System.out.println("HALLOD VAN ILYEN");
-            if (model.getAttribute("busLine").toString().contains("settlement_name="+destination)) {
+        } else if (model.getAttribute("busLine").toString().contains("settlement_name=" + from)) {
+            if (model.getAttribute("busLine").toString().contains("settlement_name=" + destination)) {
+                getId(from, destination);
                 model.addAttribute("route", model.getAttribute("busLine"));
-                System.out.println("HALLOD VAN ILYEN DE KOMOLYAN");
+                model.addAttribute("asd", "Busz");
+            }
+        } else if (model.getAttribute("shipLine").toString().contains("settlement_name=" + from)) {
+            if (model.getAttribute("shipLine").toString().contains("settlement_name=" + destination)) {
+                getId(from, destination);
+                model.addAttribute("route", model.getAttribute("shipLine"));
+                model.addAttribute("asd", "Hajó");
+            }
+        } else if (model.getAttribute("air").toString().contains("settlement_name=" + from)) {
+            if (model.getAttribute("air").toString().contains("settlement_name=" + destination)) {
+                getId(from, destination);
+                model.addAttribute("route", model.getAttribute("air"));
+                model.addAttribute("asd", "Repülő");
             }
         }
 
-        System.out.println(settlementService.findSettlement(7L));
+        System.out.println(settlementId);
 
         return "view/travel-route";
+    }
+
+    private void getId(String from, String destination) {
+        switch (from.toLowerCase()) {
+            case "algiers":
+                settlementId = 1L;  break;
+            case "oran":
+                settlementId = 2L; break;
+            case "constantine":
+                settlementId = 3L; break;
+            case "port louis":
+                settlementId = 4L; break;
+            case "cape town":
+                settlementId = 5L; break;
+            case "durban":
+                settlementId = 6L; break;
+            case "tirana":
+                settlementId = 7L; break;
+            case "ljubljana":
+                settlementId = 8L; break;
+            case "cancún":
+                settlementId = 9L; break;
+            case "guadalajara":
+                settlementId = 10L; break;
+            case "mérida":
+                settlementId = 11L; break;
+            case "mexico city":
+                settlementId = 12L; break;
+            case "monterrey":
+                settlementId = 13L; break;
+            case "tijuana":
+                settlementId = 14L; break;
+            default:
+                settlementId = 0L;
+        }
     }
 }

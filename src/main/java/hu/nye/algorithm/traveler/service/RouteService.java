@@ -15,4 +15,5 @@ public interface RouteService {
     List<TrainLines> getAllTrainLines();
 
     List<Flights> getAllFlights();
+
 }

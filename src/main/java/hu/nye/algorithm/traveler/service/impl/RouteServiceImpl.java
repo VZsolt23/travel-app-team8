@@ -48,4 +48,5 @@ public class RouteServiceImpl implements RouteService {
     public List<Flights> getAllFlights() {
         return flightRepository.findAll();
     }
+
 }
